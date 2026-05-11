@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ボンギンカン広報再設計案</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.29.0/dist/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-text-primary: #111111;
+      --color-text-secondary: #6b7280;
+      --color-text-tertiary: #9ca3af;
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f9fafb;
+      --color-border-tertiary: #e5e7eb;
+      --border-radius-lg: 12px;
+      --border-radius-md: 8px;
+      --font-sans: 'Noto Sans JP', system-ui, -apple-system, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 1rem;
+      background: var(--color-background-primary);
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.7;
+    }
+
+    .doc { max-width: 680px; margin: 0 auto; padding: 1.5rem 0; font-family: var(--font-sans); color: var(--color-text-primary); line-height: 1.7; }
+    .hero { padding: 2rem 1.5rem; background: var(--color-background-secondary); border-radius: var(--border-radius-lg); margin-bottom: 2rem; }
+    .hero .eyebrow { font-size: 12px; color: var(--color-text-secondary); letter-spacing: 0.08em; margin: 0 0 8px; }
+    .hero h1 { font-size: 22px; font-weight: 500; margin: 0 0 12px; line-height: 1.35; }
+    .hero p { font-size: 14px; color: var(--color-text-secondary); margin: 0; }
+    .section { margin: 2.5rem 0; }
+    .section-num { display: inline-block; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.1em; margin-bottom: 6px; }
+    .section h2 { font-size: 18px; font-weight: 500; margin: 0 0 4px; }
+    .section .lead { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 1.25rem; }
+    .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .stat { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; }
+    .stat .k { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px; display: flex; align-items: center; gap: 6px; }
+    .stat .v { font-size: 15px; font-weight: 500; margin: 0; line-height: 1.4; }
+    .persona-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .persona { padding: 1rem 1.25rem; border-radius: var(--border-radius-lg); border: 0.5px solid; }
+    .persona.maria { background: #EEEDFE; border-color: #AFA9EC; }
+    .persona.aka { background: #FAECE7; border-color: #F0997B; }
+    .persona .role { font-size: 11px; letter-spacing: 0.08em; margin: 0 0 4px; }
+    .persona.maria .role { color: #3C3489; }
+    .persona.aka .role { color: #712B13; }
+    .persona .name { font-size: 16px; font-weight: 500; margin: 0 0 8px; }
+    .persona.maria .name { color: #26215C; }
+    .persona.aka .name { color: #4A1B0C; }
+    .persona ul { margin: 8px 0 0; padding-left: 1rem; font-size: 13px; line-height: 1.6; }
+    .persona.maria ul { color: #3C3489; }
+    .persona.aka ul { color: #712B13; }
+    .media-row { display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 14px 0; border-bottom: 0.5px solid var(--color-border-tertiary); align-items: start; }
+    .media-row:last-child { border-bottom: none; }
+    .media-name { font-weight: 500; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+    .media-name .ti { font-size: 18px; color: var(--color-text-secondary); }
+    .media-role { font-size: 13px; color: var(--color-text-secondary); margin: 4px 0 0; }
+    .media-body { font-size: 13px; }
+    .media-body .label { font-size: 11px; color: var(--color-text-secondary); margin: 0 0 4px; letter-spacing: 0.05em; }
+    .media-body p { margin: 0 0 8px; }
+    .media-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--color-background-secondary); color: var(--color-text-secondary); }
+    .funnel { display: flex; flex-direction: column; gap: 8px; margin-top: 1rem; }
+    .funnel-step { display: grid; grid-template-columns: 28px 1fr auto; gap: 14px; align-items: center; padding: 12px 16px; border-radius: var(--border-radius-md); border: 0.5px solid; }
+    .funnel-step .step-n { font-size: 12px; font-weight: 500; }
+    .funnel-step .step-name { font-size: 14px; font-weight: 500; }
+    .funnel-step .step-desc { font-size: 12px; margin-top: 2px; }
+    .funnel-step .step-rev { font-size: 11px; padding: 3px 8px; border-radius: 10px; white-space: nowrap; }
+    .funnel-step.f-awareness { background: #E6F1FB; border-color: #B5D4F4; }
+    .funnel-step.f-awareness .step-n, .funnel-step.f-awareness .step-name { color: #0C447C; }
+    .funnel-step.f-awareness .step-desc { color: #185FA5; }
+    .funnel-step.f-awareness .step-rev { background: #B5D4F4; color: #0C447C; }
+    .funnel-step.f-relation { background: #E1F5EE; border-color: #5DCAA5; }
+    .funnel-step.f-relation .step-n, .funnel-step.f-relation .step-name { color: #085041; }
+    .funnel-step.f-relation .step-desc { color: #0F6E56; }
+    .funnel-step.f-relation .step-rev { background: #9FE1CB; color: #085041; }
+    .funnel-step.f-paid { background: #FAEEDA; border-color: #EF9F27; }
+    .funnel-step.f-paid .step-n, .funnel-step.f-paid .step-name { color: #633806; }
+    .funnel-step.f-paid .step-desc { color: #854F0B; }
+    .funnel-step.f-paid .step-rev { background: #FAC775; color: #633806; }
+    .funnel-step.f-biz { background: #FBEAF0; border-color: #ED93B1; }
+    .funnel-step.f-biz .step-n, .funnel-step.f-biz .step-name { color: #4B1528; }
+    .funnel-step.f-biz .step-desc { color: #993556; }
+    .funnel-step.f-biz .step-rev { background: #F4C0D1; color: #4B1528; }
+    .funnel-arrow { display: flex; justify-content: center; color: var(--color-text-tertiary); font-size: 10px; }
+    .series-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    .series-item { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; }
+    .series-item.priority { background: #EEEDFE; border: 0.5px solid #CECBF6; }
+    .series-item .ribbon { font-size: 10px; color: #3C3489; font-weight: 500; margin: 0 0 4px; letter-spacing: 0.05em; }
+    .series-item h4 { font-size: 14px; font-weight: 500; margin: 0 0 4px; }
+    .series-item p { font-size: 12px; color: var(--color-text-secondary); margin: 0; line-height: 1.5; }
+    .tone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .tone-box { padding: 1rem; border-radius: var(--border-radius-md); }
+    .tone-bad { background: #FCEBEB; border: 0.5px solid #F7C1C1; }
+    .tone-good { background: #EAF3DE; border: 0.5px solid #C0DD97; }
+    .tone-box .head { font-size: 12px; font-weight: 500; margin: 0 0 8px; display: flex; align-items: center; gap: 6px; }
+    .tone-bad .head { color: #791F1F; }
+    .tone-good .head { color: #27500A; }
+    .tone-box ul { margin: 0; padding-left: 1rem; font-size: 12px; line-height: 1.7; }
+    .tone-bad ul { color: #A32D2D; }
+    .tone-good ul { color: #3B6D11; }
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before { content: ''; position: absolute; left: 9px; top: 8px; bottom: 8px; width: 1px; background: var(--color-border-tertiary); }
+    .week { position: relative; margin-bottom: 18px; }
+    .week::before { content: ''; position: absolute; left: -23px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--color-background-primary); border: 1.5px solid #534AB7; }
+    .week .wlabel { font-size: 11px; letter-spacing: 0.08em; color: #534AB7; font-weight: 500; margin: 0 0 4px; }
+    .week .wtitle { font-size: 14px; font-weight: 500; margin: 0 0 6px; }
+    .week ul { margin: 0; padding-left: 1rem; font-size: 13px; line-height: 1.7; color: var(--color-text-secondary); }
+    .risk-grid { display: grid; gap: 10px; }
+    .risk { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 14px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
+    .risk .rl { font-size: 11px; color: var(--color-text-secondary); margin: 0 0 3px; }
+    .risk .rt { font-size: 13px; margin: 0; }
+    .risk .rt.head { font-weight: 500; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+    .kpi { padding: 12px 14px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
+    .kpi .ki { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px; }
+    .kpi .ki .ti { font-size: 14px; }
+    .kpi .kn { font-size: 13px; font-weight: 500; margin: 0; }
+    .kpi .kd { font-size: 11px; color: var(--color-text-secondary); margin: 4px 0 0; }
+    .closing { background: #EEEDFE; border-radius: var(--border-radius-lg); padding: 1.5rem; margin-top: 2rem; }
+    .closing h3 { font-size: 16px; font-weight: 500; color: #26215C; margin: 0 0 8px; }
+    .closing p { font-size: 13px; color: #3C3489; margin: 0; line-height: 1.7; }
+    .arrow-down { text-align: center; color: var(--color-text-tertiary); margin: -8px 0 -4px; font-size: 12px; }
+    .divider-soft { height: 1px; background: var(--color-border-tertiary); margin: 2rem 0; }
+    @media (max-width: 560px) {
+      .persona-grid, .tone-grid { grid-template-columns: 1fr; }
+      .media-row { grid-template-columns: 1fr; }
+      .risk { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">ボンギンカン広報再設計案の図解。現状課題、AIまりあと赤堀の役割分担、媒体ごとの役割、信頼形成から収益化までのファネル、初月アクション、KPIを縦スクロールで解説。</h2>
+
+<div class="doc">
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="eyebrow">PROPOSAL · 広報再設計</p>
+    <h1>AIまりあと赤堀を軸にした<br>ボンギンカン広報の再設計案</h1>
+    <p>note・X・オプチャ・チョコレートノート・HPを「点」から「線」へ。<br>企業ブランドを守りながら、信頼形成と収益化を段階的に育てる設計図。</p>
+  </div>
+
+  <!-- 1. 現状課題 -->
+  <div class="section">
+    <span class="section-num">01 / 現状</span>
+    <h2>発信は揃っているが、線でつながっていない</h2>
+    <p class="lead">素材は十分にある。問題は「誰が・どこで・何を語っているのか」が読者から見て曖昧なこと。</p>
+
+    <div class="card">
+      <div class="stat-grid">
+        <div class="stat">
+          <p class="k"><i class="ti ti-puzzle" aria-hidden="true"></i>発信が点に</p>
+          <p class="v">媒体ごとに役割が曖昧で読者が会社像をつかめない</p>
+        </div>
+        <div class="stat">
+          <p class="k"><i class="ti ti-user-question" aria-hidden="true"></i>人格が混在</p>
+          <p class="v">広報まりあが会社か個人か挑戦者か判断しにくい</p>
+        </div>
+        <div class="stat">
+          <p class="k"><i class="ti ti-alert-triangle" aria-hidden="true"></i>情報商材化リスク</p>
+          <p class="v">AI系発信は煽り表現に寄ると toB信頼を損なう</p>
+        </div>
+        <div class="stat">
+          <p class="k"><i class="ti ti-arrow-fork" aria-hidden="true"></i>HP導線の弱さ</p>
+          <p class="v">最終的な仕事依頼の受け皿が機能しきれていない</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 解決の骨格：2人格 -->
+  <div class="section">
+    <span class="section-num">02 / 解決の骨格</span>
+    <h2>「AI広報」と「人間挑戦者」を分けて立てる</h2>
+    <p class="lead">役割を明確に分離することで、読者は迷わず、社内は判断しやすく、ブランドは守られる。</p>
+
+    <div class="persona-grid">
+      <div class="persona maria">
+        <p class="role">AI人格 · ファシリテーター</p>
+        <p class="name"><i class="ti ti-sparkles" aria-hidden="true" style="font-size:16px;vertical-align:-2px;margin-right:4px"></i>白鳥まりあ</p>
+        <div style="font-size:12px;line-height:1.6;">AI広報として情報を整理し、問いを投げ、会社の思想を伝える役割。</div>
+        <ul>
+          <li>AIニュースの観測と整理</li>
+          <li>会社の取り組みの発信</li>
+          <li>オプチャの進行・問いかけ</li>
+          <li>赤堀への助言役</li>
+        </ul>
+      </div>
+      <div class="persona aka">
+        <p class="role">人間 · 実践者</p>
+        <p class="name"><i class="ti ti-tools" aria-hidden="true" style="font-size:16px;vertical-align:-2px;margin-right:4px"></i>赤堀</p>
+        <div style="font-size:12px;line-height:1.6;">非エンジニアの挑戦者として実際に手を動かし、失敗しながら学ぶ役割。</div>
+        <ul>
+          <li>Claude Code・AI開発の実践</li>
+          <li>失敗談と学習ログの公開</li>
+          <li>業務改善の試行錯誤</li>
+          <li>読者と同じ目線の参加者</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;padding:12px 16px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:12px;color:var(--color-text-secondary);text-align:center;">
+      <i class="ti ti-building" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>
+      この2人格の実験と実務活用を通じて、<strong style="color:var(--color-text-primary);font-weight:500;">ボンギンカン</strong>は「AIを現場に落とし込む会社」として認知される
+    </div>
+  </div>
+
+  <!-- 3. 媒体マップ -->
+  <div class="section">
+    <span class="section-num">03 / 媒体マップ</span>
+    <h2>各媒体に「役割」と「担当人格」を与える</h2>
+    <p class="lead">バラバラだった発信を、入口・深掘り・接点・受け皿に整理する。</p>
+
+    <div class="card">
+      <div class="media-row">
+        <div>
+          <div class="media-name"><i class="ti ti-notebook" aria-hidden="true"></i>note</div>
+          <p class="media-role">会社の入口・思想の場</p>
+        </div>
+        <div class="media-body">
+          <p class="label">記事タイプ</p>
+          <p>会社ニュース／AIまりあ観測記事／赤堀挑戦記／対談・実験レポート</p>
+          <div class="media-tags"><span class="tag">まりあ</span><span class="tag">赤堀</span><span class="tag">読み物</span></div>
+        </div>
+      </div>
+
+      <div class="media-row">
+        <div>
+          <div class="media-name"><i class="ti ti-brand-x" aria-hidden="true"></i>X</div>
+          <p class="media-role">日々の接点と告知</p>
+        </div>
+        <div class="media-body">
+          <p class="label">投稿構成（1日3投稿目安）</p>
+          <p>まりあのAIニュース／赤堀の実践ログ／note・オプチャ・HPへの告知</p>
+          <div class="media-tags"><span class="tag">まりあ</span><span class="tag">赤堀</span><span class="tag">告知</span></div>
+        </div>
+      </div>
+
+      <div class="media-row">
+        <div>
+          <div class="media-name"><i class="ti ti-message-circle" aria-hidden="true"></i>オプチャ</div>
+          <p class="media-role">関係構築の場</p>
+        </div>
+        <div class="media-body">
+          <p class="label">運用イメージ</p>
+          <p>まりあが進行役、赤堀が一参加者として反応。もくもく会・ミニ相談で参加体験を作る</p>
+          <div class="media-tags"><span class="tag">まりあ進行</span><span class="tag">参加体験</span></div>
+        </div>
+      </div>
+
+      <div class="media-row">
+        <div>
+          <div class="media-name"><i class="ti ti-book-2" aria-hidden="true"></i>チョコレートノート</div>
+          <p class="media-role">深掘りと収益化</p>
+        </div>
+        <div class="media-body">
+          <p class="label">無料 / サブスク の使い分け</p>
+          <p>無料は挑戦と学び、サブスクは再現可能なプロンプト・手順・型を提供</p>
+          <div class="media-tags"><span class="tag">赤堀主導</span><span class="tag">サブスク</span></div>
+        </div>
+      </div>
+
+      <div class="media-row">
+        <div>
+          <div class="media-name"><i class="ti ti-world" aria-hidden="true"></i>HP</div>
+          <p class="media-role">仕事依頼の受け皿</p>
+        </div>
+        <div class="media-body">
+          <p class="label">必要な要素</p>
+          <p>何の会社か／誰向けか／頼める内容／実績・事例／問い合わせフォーム</p>
+          <div class="media-tags"><span class="tag">法人導線</span><span class="tag">信頼形成</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 信頼形成→収益化ファネル -->
+  <div class="section">
+    <span class="section-num">04 / 収益化の流れ</span>
+    <h2>信頼を作る場と、収益を生む場を分ける</h2>
+    <p class="lead">いきなり高額商品ではなく、認知 → 関係構築 → サブスク → 法人案件の順で育てる。</p>
+
+    <div class="funnel">
+      <div class="funnel-step f-awareness">
+        <div class="step-n">01</div>
+        <div>
+          <div class="step-name">X・無料note</div>
+          <div class="step-desc">認知と興味形成。煽らず実務目線で接点を作る</div>
+        </div>
+        <div class="step-rev">直接収益なし</div>
+      </div>
+      <div class="funnel-arrow">▼</div>
+      <div class="funnel-step f-relation">
+        <div class="step-n">02</div>
+        <div>
+          <div class="step-name">オプチャ</div>
+          <div class="step-desc">関係構築・参加体験。もくもく会で熱量を育てる</div>
+        </div>
+        <div class="step-rev">直接収益なし</div>
+      </div>
+      <div class="funnel-arrow">▼</div>
+      <div class="funnel-step f-paid">
+        <div class="step-n">03</div>
+        <div>
+          <div class="step-name">チョコレートノート（サブスク）</div>
+          <div class="step-desc">深掘り・再現性提供。短期収益の主軸</div>
+        </div>
+        <div class="step-rev">サブスク収益</div>
+      </div>
+      <div class="funnel-arrow">▼</div>
+      <div class="funnel-step f-paid">
+        <div class="step-n">04</div>
+        <div>
+          <div class="step-name">セミナー・もくもく会</div>
+          <div class="step-desc">実務活用の体系化。中期収益</div>
+        </div>
+        <div class="step-rev">有料参加</div>
+      </div>
+      <div class="funnel-arrow">▼</div>
+      <div class="funnel-step f-biz">
+        <div class="step-n">05</div>
+        <div>
+          <div class="step-name">HP問い合わせ・コミュニティ</div>
+          <div class="step-desc">法人相談・研修・開発。長期の高単価案件</div>
+        </div>
+        <div class="step-rev">高単価／月額</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. シリーズ案 -->
+  <div class="section">
+    <span class="section-num">05 / 始めるシリーズ</span>
+    <h2>固定シリーズで「追える発信」を作る</h2>
+    <p class="lead">読者がついていける流れを作るために、シリーズ化から始める。優先3本を太字で。</p>
+
+    <div class="series-grid">
+      <div class="series-item priority">
+        <p class="ribbon">PRIORITY · まず始める</p>
+        <h4>AIまりあ観測日誌</h4>
+        <p>AIニュースや業界動向を、AI広報視点で整理する</p>
+      </div>
+      <div class="series-item priority">
+        <p class="ribbon">PRIORITY · まず始める</p>
+        <h4>赤堀のAI実践ログ</h4>
+        <p>非エンジニアの赤堀が実際にAIツールに挑戦する記録</p>
+      </div>
+      <div class="series-item priority">
+        <p class="ribbon">PRIORITY · まず始める</p>
+        <h4>AI BOOT CAMP通信</h4>
+        <p>オプチャ・もくもく会の告知と振り返り</p>
+      </div>
+      <div class="series-item">
+        <h4>MARIA開発室</h4>
+        <p>AIエージェント・社内AI活用の実験記録</p>
+      </div>
+      <div class="series-item">
+        <h4>ボンギンカンの現場から</h4>
+        <p>展示会・社内活動・サービス開発の紹介</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. 情報商材回避ルール -->
+  <div class="section">
+    <span class="section-num">06 / トーン設計</span>
+    <h2>「稼ぐ」ではなく「実務改善」に寄せる</h2>
+    <p class="lead">toB信頼を守るため、使う言葉・使わない言葉を明文化する。</p>
+
+    <div class="tone-grid">
+      <div class="tone-box tone-bad">
+        <div class="head"><i class="ti ti-x" aria-hidden="true"></i>使わない表現</div>
+        <ul>
+          <li>AIで月収◯万円</li>
+          <li>誰でも爆速で稼げる</li>
+          <li>これだけで自動化</li>
+          <li>知らない人だけ損してる</li>
+          <li>副業で勝つ／最短で儲かる</li>
+        </ul>
+      </div>
+      <div class="tone-box tone-good">
+        <div class="head"><i class="ti ti-check" aria-hidden="true"></i>使う表現</div>
+        <ul>
+          <li>AIを実務にどう落とし込むか</li>
+          <li>非エンジニアでもどこまでできるか</li>
+          <li>現場の困りごとをどう減らすか</li>
+          <li>試してわかったこと</li>
+          <li>失敗したからこそわかったこと</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. 初月アクション -->
+  <div class="section">
+    <span class="section-num">07 / 初月の進め方</span>
+    <h2>1か月で世界観と運用型を作る</h2>
+    <p class="lead">最初から全部やらない。継続できる型を整えることを優先する。</p>
+
+    <div class="card">
+      <div class="timeline">
+        <div class="week">
+          <p class="wlabel">WEEK 1 · 世界観の整備</p>
+          <p class="wtitle">役割定義とプロフィール整理</p>
+          <ul>
+            <li>AIまりあと赤堀の役割定義を決定</li>
+            <li>note・Xのプロフィールを整える</li>
+            <li>固定シリーズ名を確定／HP導線を確認</li>
+          </ul>
+        </div>
+        <div class="week">
+          <p class="wlabel">WEEK 2 · 最初の発信</p>
+          <p class="wtitle">優先シリーズを2本公開</p>
+          <ul>
+            <li>「AIまりあ観測日誌」1本公開</li>
+            <li>「赤堀のAI実践ログ」1本公開</li>
+            <li>X告知／オプチャで問いかけ投稿</li>
+          </ul>
+        </div>
+        <div class="week">
+          <p class="wlabel">WEEK 3 · 収益化テスト</p>
+          <p class="wtitle">チョコレートノート始動</p>
+          <ul>
+            <li>無料記事を1本公開</li>
+            <li>サブスク向け詳細手順・プロンプトを公開</li>
+            <li>もくもく会の小企画案を出す</li>
+          </ul>
+        </div>
+        <div class="week">
+          <p class="wlabel">WEEK 4 · 振り返り</p>
+          <p class="wtitle">反応の確認と来月の判断</p>
+          <ul>
+            <li>反応の良かった記事・投稿を分析</li>
+            <li>もくもく会テスト開催の判断</li>
+            <li>HP誘導・問い合わせ状況を確認</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. KPI -->
+  <div class="section">
+    <span class="section-num">08 / 成果の見方</span>
+    <h2>売上より「次の行動」を見る</h2>
+    <p class="lead">初期はPVではなく、読者が次のアクションに進んだかを指標にする。</p>
+
+    <div class="kpi-grid">
+      <div class="kpi">
+        <p class="ki"><i class="ti ti-eye" aria-hidden="true"></i>note閲覧数</p>
+        <p class="kn">テーマ需要の確認</p>
+        <p class="kd">どの企画が読まれるか</p>
+      </div>
+      <div class="kpi">
+        <p class="ki"><i class="ti ti-share" aria-hidden="true"></i>X反応・拡散</p>
+        <p class="kn">拡散力の確認</p>
+        <p class="kd">記事からの言及数</p>
+      </div>
+      <div class="kpi">
+        <p class="ki"><i class="ti ti-click" aria-hidden="true"></i>プロフィールクリック</p>
+        <p class="kn">興味の強さ</p>
+        <p class="kd">Xからの誘導率</p>
+      </div>
+      <div class="kpi">
+        <p class="ki"><i class="ti ti-world" aria-hidden="true"></i>HPクリック</p>
+        <p class="kn">法人導線の確認</p>
+        <p class="kd">仕事につながる流れ</p>
+      </div>
+      <div class="kpi">
+        <p class="ki"><i class="ti ti-users" aria-hidden="true"></i>オプチャ参加数</p>
+        <p class="kn">コミュニティ導線</p>
+        <p class="kd">関係構築の伸び</p>
+      </div>
+      <div class="kpi">
+        <p class="ki"><i class="ti ti-message" aria-hidden="true"></i>コメント・返信</p>
+        <p class="kn">熱量の確認</p>
+        <p class="kd">受け手の関与度</p>
+      </div>
+      <div class="kpi">
+        <p class="ki"><i class="ti ti-credit-card" aria-hidden="true"></i>サブスク登録</p>
+        <p class="kn">収益化の確認</p>
+        <p class="kd">短期収益の動き</p>
+      </div>
+      <div class="kpi">
+        <p class="ki"><i class="ti ti-calendar-event" aria-hidden="true"></i>もくもく会参加</p>
+        <p class="kn">セミナー化の芽</p>
+        <p class="kd">中期収益の可能性</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. リスクと対策 -->
+  <div class="section">
+    <span class="section-num">09 / 想定リスク</span>
+    <h2>4つの懸念と、それぞれの打ち手</h2>
+    <p class="lead">事前に想定しておくことで、走り出してから止まらない設計にする。</p>
+
+    <div class="risk-grid">
+      <div class="risk">
+        <div>
+          <p class="rl"><i class="ti ti-alert-circle" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>懸念 1</p>
+          <p class="rt head">まりあと赤堀の区別がつかなくなる</p>
+        </div>
+        <div>
+          <p class="rl">対策</p>
+          <p class="rt">記事冒頭の名乗りを固定し、プロフィールで役割を明示</p>
+        </div>
+      </div>
+      <div class="risk">
+        <div>
+          <p class="rl"><i class="ti ti-alert-circle" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>懸念 2</p>
+          <p class="rt head">情報商材っぽく見える</p>
+        </div>
+        <div>
+          <p class="rl">対策</p>
+          <p class="rt">「稼ぐ」表現を排除し、実務改善・試行錯誤に言葉を寄せる</p>
+        </div>
+      </div>
+      <div class="risk">
+        <div>
+          <p class="rl"><i class="ti ti-alert-circle" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>懸念 3</p>
+          <p class="rt head">運用負荷が高くなる</p>
+        </div>
+        <div>
+          <p class="rl">対策</p>
+          <p class="rt">記事1本をX・オプチャ・サブスクに使い回し、週2本ペースを上限に</p>
+        </div>
+      </div>
+      <div class="risk">
+        <div>
+          <p class="rl"><i class="ti ti-alert-circle" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>懸念 4</p>
+          <p class="rt head">収益化まで時間がかかる</p>
+        </div>
+        <div>
+          <p class="rl">対策</p>
+          <p class="rt">短期＝サブスク／中期＝セミナー／長期＝法人案件で段階化</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="closing">
+    <h3><i class="ti ti-target-arrow" aria-hidden="true" style="vertical-align:-2px;margin-right:6px"></i>この提案で得られるもの</h3>
+    <p>
+      noteやXを頑張る話ではなく、<strong style="color:#26215C;font-weight:500;">会社を伝える広報設計</strong>です。<br>
+      ① 企業ブランドが守れる ② 情報商材感を避けられる ③ 媒体の役割が整理される<br>
+      ④ チョコレートノートで収益化につながる ⑤ セミナー・法人相談へ展開できる<br>
+      <span style="display:inline-block;margin-top:8px;">まずは2人格の役割を明確にし、優先シリーズ3本から着手します。</span>
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>
